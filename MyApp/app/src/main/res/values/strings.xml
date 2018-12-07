@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MyApp</string>
+    <string name="title_activity_security">SecurityActivity</string>
+    <string name="ok">OK</string>
+    <string name="enable_secure_mode">Enable secure mode</string>
+    <string name="verify_a_fingerprint">Verify a fingerprint</string>
+    <string name="invalid_fingerprint">Invalid fingerprint</string>
 </resources>
