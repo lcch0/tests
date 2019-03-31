@@ -1,15 +1,25 @@
 {
-  "twitterData"
-  {
-    
-      "posts": [
-        {
-          "id": 1,
-          "title": "hello"
-        }
-      ],
-      "profile": {
-        "name": "typicode"
-      }
-  }
+	"data": [{
+
+		"I identify as an attack helicopter": [{
+			"title": "let's rrrumble",
+			"latitude": 35.3,
+			"longitude": -75.0,
+			"hashTags": ["@notweet", "@nodev"]
+		}],
+
+		"SleepingCat": [{
+			"title": "gentle, gentle slumber...",
+			"latitude": 35.3,
+			"longitude": -75.1,
+			"hashTags": ["@notweet", "@nocook"]
+		}],
+		"CopperMaiden": [{
+			"title": "Survived vegan hiking",
+			"latitude": 35.3,
+			"longitude": -75.2,
+			"hashTags": ["@notweet", "@nomeat"]
+		}]
+	}]
+
 }
