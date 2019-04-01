@@ -17,6 +17,8 @@ class TweetInfoActivity : AppCompatActivity() {
         var data =
             intent.getParcelableExtra<ParcelableMarker>(MarkerDataKey)
 
+        //here i use my data to show it to the user
+
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()

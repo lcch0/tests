@@ -3,29 +3,20 @@ package com.example.twitmap
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatDialogFragment
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import com.example.twitmap.interfaces.IGoogleMarkerData
-import java.lang.ref.WeakReference
 
 class TweetInfoFragment : AppCompatDialogFragment()
 {
 
     private val isShowing: Boolean
         get() = dialog != null && dialog.isShowing
-
-    private val negativeButton: WeakReference<Button>
-        get() {
-            val dlg = dialog as AlertDialog
-            return WeakReference(dlg.getButton(DialogInterface.BUTTON_NEGATIVE))
-        }
 
     private var onOk: ((IGoogleMarkerData) -> Unit)? = null
 
@@ -35,7 +26,6 @@ class TweetInfoFragment : AppCompatDialogFragment()
             dialog.setDismissMessage(null)
         super.onDestroyView()
     }
-
 
     override fun show(manager: FragmentManager, tag: String)
     {
