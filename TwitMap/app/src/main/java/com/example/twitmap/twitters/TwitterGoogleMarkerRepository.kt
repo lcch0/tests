@@ -83,6 +83,21 @@ class TwitterGoogleMarkerRepository : IGoogleMarkerRepository
             _markers[hash] = found
         }
 
+        _markers = compressMap()
+
         onUpdated?.invoke(this)
+    }
+
+    private fun compressMap(): MutableMap<Int, IGoogleMarkerData>
+    {
+        val newMap = mutableMapOf<Int, IGoogleMarkerData>()
+        val sortedValues = _markers.values.sortedByDescending { it.timestamp }.take(50)
+
+        for (sv in sortedValues)
+        {
+            newMap[sv.hashCode()] = sv
+        }
+
+        return newMap
     }
 }

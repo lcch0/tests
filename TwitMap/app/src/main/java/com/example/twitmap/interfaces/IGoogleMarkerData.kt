@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
 
 interface IGoogleMarkerData
 {
@@ -15,6 +16,7 @@ interface IGoogleMarkerData
     var radiusMeters: Float
     var userName: String
     var hashTags: List<String>
+    var timestamp: Date
 
     fun calculateBounds(radiusM: Float): LatLngBounds?
     fun getAsParcelable(): Parcelable

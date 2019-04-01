@@ -6,9 +6,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
 
 class GoogleMarkerData(override var position: LatLng) : IGoogleMarkerData
 {
+    override var timestamp: Date = Date()
     override var marker: Marker? = null
     override var description: String = "Default location"
     override var markerOptions: MarkerOptions =
