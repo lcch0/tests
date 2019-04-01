@@ -88,28 +88,12 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
         for (m in map.markerList)
         {
             //add non existing markers
-            if(m.value.marker == null)
-            {
-                val mo = createMarkerOptions(m.value)
-                val marker = googleMap?.addMarker(mo)
-
-                if(marker != null)
-                {
-                    m.value.markerOptions = mo
-                    m.value.marker = marker
-                }
-            }
-            else//update existing
+            if(m.value.marker != null)
             {
                 m.value.marker?.remove()
-                val mo = createMarkerOptions(m.value)
-                val marker = googleMap?.addMarker(mo)
-                if(marker != null)
-                {
-                    m.value.markerOptions = mo
-                    m.value.marker = marker
-                }
             }
+
+            addMarker(m.value)
         }
     }
 
@@ -117,14 +101,18 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
     {
         for (m in repository.markerList)
         {
-            val mo = createMarkerOptions(m.value)
-            val marker = googleMap?.addMarker(mo)
+            addMarker(m.value)
+        }
+    }
 
-            if(marker != null)
-            {
-                m.value.markerOptions = mo
-                m.value.marker = marker
-            }
+    private fun addMarker(m: IGoogleMarkerData)
+    {
+        val mo = createMarkerOptions(m)
+        val marker = googleMap?.addMarker(mo)
+
+        if (marker != null) {
+            m.markerOptions = mo
+            m.marker = marker
         }
     }
 
