@@ -4,8 +4,8 @@
          {  
             "username":"I identify as an attack helicopter",
             "title":"let's rrrumble",
-            "latitude":45.5022
-            "longitude":-73.5673,
+            "latitude":45.503
+            "longitude":-73.569,
             "hashTags":[  
                "@notweet",
                "@nodev"
@@ -14,7 +14,7 @@
          {  
             "username":"SleepingCat",
             "title":"gentle, gentle slumber...",
-            "latitude":45.5017,
+            "latitude":45.50,
             "longitude":-73.5680,
             "hashTags":[  
                "@notweet",
@@ -25,7 +25,7 @@
             "username":"CopperMaiden",
             "title":"Survived vegan hiking",
             "latitude":45.5016,
-            "longitude":-73.5669,
+            "longitude":-73.566,
             "hashTags":[  
                "@notweet",
                "@nomeat"
