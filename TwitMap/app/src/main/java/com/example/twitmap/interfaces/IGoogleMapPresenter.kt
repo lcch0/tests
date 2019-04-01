@@ -11,7 +11,9 @@ interface IGoogleMapPresenter
 
     fun init(marker: IGoogleMarkerData)
     fun initAsync(marker: IGoogleMarkerData)
+
+    fun update()
+    fun updateAsync()
+
     fun moveToSquare(marker: IGoogleMarkerData)
-    fun addMarker(marker: IGoogleMarkerData)
-    fun updateMarker(marker: IGoogleMarkerData)
 }

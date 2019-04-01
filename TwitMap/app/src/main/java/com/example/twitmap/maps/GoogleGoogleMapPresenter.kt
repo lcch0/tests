@@ -7,6 +7,7 @@ import com.example.twitmap.interfaces.IViewContext
 import com.example.twitmap.twitters.TwitterGoogleMarkerRepository
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.CoroutineScope
@@ -15,14 +16,15 @@ import kotlinx.coroutines.launch
 
 class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapPresenter
 {
+    private var currentPosition: LatLng = GoogleMarkerData.defaultLocation
     private var _markerRepo = mutableListOf<IGoogleMarkerRepository>()
 
     init
     {
         _markerRepo.add(TwitterGoogleMarkerRepository())//i may add a factory here, or use some IoC, but let's be simple, it's not the complicated case where we need it
 
-        _markerRepo[0].onUpdated = { updateMarkers(it) }
-        _markerRepo[0].onAdded = { addMarkers(it) }
+        _markerRepo[0].onUpdated = { updateMarkers(twitterRepo) }
+        _markerRepo[0].onAdded = { addMarkers(twitterRepo) }
     }
 
 
@@ -35,14 +37,11 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
 
     override fun init(marker: IGoogleMarkerData)
     {
+        currentPosition = LatLng(marker.position.latitude, marker.position.longitude)
         twitterRepo.initAsync(marker, context)
 
-        addMarker(marker)
         val camera = CameraUpdateFactory.newLatLngZoom(marker.position, 15f)
         googleMap?.moveCamera(camera)
-
-        addMarkers(twitterRepo.markerList)
-
         googleMap?.setOnMarkerClickListener {  m -> onMarkerClick(m)  }
     }
 
@@ -54,6 +53,24 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
         }
     }
 
+    override fun update()
+    {
+        val position = googleMap?.cameraPosition?:return
+
+        val marker = GoogleMarkerData(position.target)
+        twitterRepo.update(marker, context)
+
+        googleMap?.setOnMarkerClickListener {  m -> onMarkerClick(m)  }
+    }
+
+    override fun updateAsync()
+    {
+        val uiScope = CoroutineScope(Dispatchers.Main)
+        uiScope.launch {
+            update()
+        }
+    }
+
     override fun moveToSquare(marker: IGoogleMarkerData)
     {
         val bounds = marker.calculateBounds(5000f)
@@ -61,57 +78,53 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
         googleMap?.animateCamera(camera)
     }
 
-    override fun addMarker(marker: IGoogleMarkerData)
-    {
-        val mo = createMarkerOptions(marker)
-        val hash = marker.hashCode()
-        val m = googleMap?.addMarker(mo)
-
-        if(m != null)
-        {
-            marker.markerOptions = mo
-            marker.marker = m
-            twitterRepo.markerList[hash] = marker
-        }
-    }
-
-    override fun updateMarker(marker: IGoogleMarkerData)
-    {
-        val mo = createMarkerOptions(marker)
-        val hash = marker.hashCode()
-        if(twitterRepo.markerList.containsKey(hash))
-        {
-            val mm = twitterRepo.markerList[hash]
-            mm?.marker?.remove()
-
-            val m = googleMap?.addMarker(mo)
-            if(m != null)
-            {
-                marker.markerOptions = mo
-                marker.marker = m
-                twitterRepo.markerList[hash] = marker
-            }
-        }
-    }
-
     private fun createMarkerOptions(mapData: IGoogleMarkerData) =
         MarkerOptions()
             .position(mapData.position)
             .title("${mapData.userName}\n${mapData.description}")
 
-    private fun updateMarkers(map: Map<Int, IGoogleMarkerData>)
+    private fun updateMarkers(map: TwitterGoogleMarkerRepository)
     {
-        for (m in map)
+        for (m in map.markerList)
         {
-            updateMarker(m.value)
+            //add non existing markers
+            if(m.value.marker == null)
+            {
+                val mo = createMarkerOptions(m.value)
+                val marker = googleMap?.addMarker(mo)
+
+                if(marker != null)
+                {
+                    m.value.markerOptions = mo
+                    m.value.marker = marker
+                }
+            }
+            else//update existing
+            {
+                m.value.marker?.remove()
+                val mo = createMarkerOptions(m.value)
+                val marker = googleMap?.addMarker(mo)
+                if(marker != null)
+                {
+                    m.value.markerOptions = mo
+                    m.value.marker = marker
+                }
+            }
         }
     }
 
-    private fun addMarkers(map: Map<Int, IGoogleMarkerData>)
+    private fun addMarkers(repository: IGoogleMarkerRepository)
     {
-        for (m in map)
+        for (m in repository.markerList)
         {
-            addMarker(m.value)
+            val mo = createMarkerOptions(m.value)
+            val marker = googleMap?.addMarker(mo)
+
+            if(marker != null)
+            {
+                m.value.markerOptions = mo
+                m.value.marker = marker
+            }
         }
     }
 

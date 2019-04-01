@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 
 class TwitterGoogleMarkerRepository : IGoogleMarkerRepository
 {
-    override var onUpdated: ((Map<Int, IGoogleMarkerData>) -> Unit)? = null
-    override var onAdded: ((Map<Int, IGoogleMarkerData>) -> Unit)? = null
+    override var onUpdated: ((IGoogleMarkerRepository) -> Unit)? = null
+    override var onAdded: ((IGoogleMarkerRepository) -> Unit)? = null
     private var _markers = mutableMapOf<Int, IGoogleMarkerData>()
     override val markerList: MutableMap<Int, IGoogleMarkerData>
         get() = _markers
@@ -33,6 +33,20 @@ class TwitterGoogleMarkerRepository : IGoogleMarkerRepository
         query.requestTweetsAround(marker, context)
     }
 
+    override fun update(marker: IGoogleMarkerData, context: IViewContext)
+    {
+        val query = TwitterQuery()
+        query.onSuccess = {d -> updateMarkers(d)}
+
+        query.requestTweetsAround(marker, context)
+    }
+
+    override fun updateAsync(marker: IGoogleMarkerData, context: IViewContext)
+    {
+        val uiScope = CoroutineScope(Dispatchers.Main)
+        uiScope.launch { update(marker, context)}
+    }
+
     private fun initMarkers(data: TwitterData)
     {
         _markers.clear()
@@ -46,6 +60,29 @@ class TwitterGoogleMarkerRepository : IGoogleMarkerRepository
             _markers[newMarker.hashCode()] = newMarker
         }
 
-        onAdded?.invoke(_markers)
+        onAdded?.invoke(this)
+    }
+
+    private fun updateMarkers(data: TwitterData)
+    {
+        for (post in data.entry.posts)
+        {
+            val latLong = LatLng(post.latitude, post.longitude)
+
+            val hash = latLong.hashCode()
+            var found = _markers[hash]
+
+            if(found == null)
+            {
+                found = GoogleMarkerData(latLong)
+            }
+
+            found.description = post.title
+            found.userName = post.username
+            found.hashTags = post.hashTags
+            _markers[hash] = found
+        }
+
+        onUpdated?.invoke(this)
     }
 }

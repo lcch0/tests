@@ -94,7 +94,6 @@ class TweetInfoFragment : AppCompatDialogFragment()
         sb.appendln(marker.description)
         sb.appendln()
         sb.appendln("hash tags:")
-        val s = marker.hashTags.joinToString()
         sb.appendln(marker.hashTags.joinToString())
 
         textView.text = sb.toString()
@@ -109,6 +108,10 @@ class TweetInfoFragment : AppCompatDialogFragment()
 
         alert.setPositiveButton("More..") { _, _ ->
             onOk?.invoke(marker)
+        }
+
+        alert.setNegativeButton("Return") { _, _ ->
+            dismiss()
         }
 
         alert.setCancelable(true)

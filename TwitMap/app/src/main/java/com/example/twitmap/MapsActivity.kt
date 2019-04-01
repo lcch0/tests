@@ -39,6 +39,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, IViewContext
         googleMapPresenter.initAsync(mapParams)
 
         //todo add move listeners to google map
+        googleMapPresenter.googleMap?.setOnCameraIdleListener{googleMapPresenter.updateAsync()}
     }
 
     override fun showMarkerInfo(markerData: IGoogleMarkerData)
