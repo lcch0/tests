@@ -17,7 +17,7 @@ class ParcelableMarker() : Parcelable
     {
         userName = marker.userName
         description = marker.description
-        center = marker.center
+        center = marker.position
         radius = marker.radiusMeters
         hashTags = marker.hashTags
     }

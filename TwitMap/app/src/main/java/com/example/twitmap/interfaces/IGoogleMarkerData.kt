@@ -8,7 +8,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 interface IGoogleMarkerData
 {
-    var center: LatLng
+    var position: LatLng
     var description: String
     var markerOptions: MarkerOptions
     var marker: Marker?

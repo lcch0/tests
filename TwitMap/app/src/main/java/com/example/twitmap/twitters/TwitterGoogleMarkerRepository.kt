@@ -28,12 +28,12 @@ class TwitterGoogleMarkerRepository : IGoogleMarkerRepository
     override fun init(marker: IGoogleMarkerData, context: IViewContext)
     {
         val query = TwitterQuery()
-        query.onSuccess = {d -> onSuccess(d)}
+        query.onSuccess = {d -> initMarkers(d)}
 
         query.requestTweetsAround(marker, context)
     }
 
-    private fun onSuccess(data: TwitterData)
+    private fun initMarkers(data: TwitterData)
     {
         _markers.clear()
 

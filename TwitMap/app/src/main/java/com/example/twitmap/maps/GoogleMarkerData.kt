@@ -7,12 +7,12 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-class GoogleMarkerData(override var center: LatLng) : IGoogleMarkerData
+class GoogleMarkerData(override var position: LatLng) : IGoogleMarkerData
 {
     override var marker: Marker? = null
     override var description: String = "Default location"
     override var markerOptions: MarkerOptions =
-        MarkerOptions().position(center).title(description)
+        MarkerOptions().position(position).title(description)
 
     override var userName: String = ""
     override var hashTags: List<String> = listOf()
@@ -26,8 +26,10 @@ class GoogleMarkerData(override var center: LatLng) : IGoogleMarkerData
     }
 
     override fun calculateBounds(radiusM: Float): LatLngBounds? {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
+            TODO("not implemented")
+        //here i'll take position, convert it to UTM, calc a rect, then convert its top left and bottom right
+        //corners to LatLngBounds
+    }
 
     override fun equals(other: Any?): Boolean
     {
@@ -41,6 +43,7 @@ class GoogleMarkerData(override var center: LatLng) : IGoogleMarkerData
 
     override fun getAsParcelable(): Parcelable
     {
+        //i don't want to make 'this' parcelable, so let's move it to a simple class outside
         val serializable = ParcelableMarker()
         serializable.set(this)
 
@@ -49,6 +52,6 @@ class GoogleMarkerData(override var center: LatLng) : IGoogleMarkerData
 
     companion object
     {
-        val defaultLocation = LatLng(45.5017, -73.5673)
+        val defaultLocation = LatLng(45.5017, -73.5673)//montreal
     }
 }

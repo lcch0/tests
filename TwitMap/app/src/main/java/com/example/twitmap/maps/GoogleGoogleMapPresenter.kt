@@ -16,10 +16,6 @@ import kotlinx.coroutines.launch
 class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapPresenter
 {
     private var _markerRepo = mutableListOf<IGoogleMarkerRepository>()
-    override val geoMarkerRepositories: List<IGoogleMarkerRepository>
-        get() = _markerRepo
-
-
 
     init
     {
@@ -28,6 +24,10 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
         _markerRepo[0].onUpdated = { updateMarkers(it) }
         _markerRepo[0].onAdded = { addMarkers(it) }
     }
+
+
+    override val geoMarkerRepositories: List<IGoogleMarkerRepository>
+        get() = _markerRepo
 
     //risky cast, but this is a test proj, eh?
     private val twitterRepo = _markerRepo[0] as TwitterGoogleMarkerRepository
@@ -38,7 +38,7 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
         twitterRepo.initAsync(marker, context)
 
         addMarker(marker)
-        val camera = CameraUpdateFactory.newLatLngZoom(marker.center, 15f)
+        val camera = CameraUpdateFactory.newLatLngZoom(marker.position, 15f)
         googleMap?.moveCamera(camera)
 
         addMarkers(twitterRepo.markerList)
@@ -79,8 +79,11 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
     {
         val mo = createMarkerOptions(marker)
         val hash = marker.hashCode()
-        if(!twitterRepo.markerList.containsKey(hash))
+        if(twitterRepo.markerList.containsKey(hash))
         {
+            val mm = twitterRepo.markerList[hash]
+            mm?.marker?.remove()
+
             val m = googleMap?.addMarker(mo)
             if(m != null)
             {
@@ -93,7 +96,7 @@ class GoogleGoogleMapPresenter(override var context: IViewContext) : IGoogleMapP
 
     private fun createMarkerOptions(mapData: IGoogleMarkerData) =
         MarkerOptions()
-            .position(mapData.center)
+            .position(mapData.position)
             .title("${mapData.userName}\n${mapData.description}")
 
     private fun updateMarkers(map: Map<Int, IGoogleMarkerData>)

@@ -9,8 +9,8 @@ interface IGoogleMapPresenter
     var context: IViewContext
 
     fun init(marker: IGoogleMarkerData)
+    fun initAsync(marker: IGoogleMarkerData)
     fun moveToSquare(marker: IGoogleMarkerData)
     fun addMarker(marker: IGoogleMarkerData)
     fun updateMarker(marker: IGoogleMarkerData)
-    fun initAsync(marker: IGoogleMarkerData)
 }

@@ -15,7 +15,8 @@ import android.widget.TextView
 import com.example.twitmap.interfaces.IGoogleMarkerData
 import java.lang.ref.WeakReference
 
-class TweetInfoFragment : AppCompatDialogFragment() {
+class TweetInfoFragment : AppCompatDialogFragment()
+{
 
     private val isShowing: Boolean
         get() = dialog != null && dialog.isShowing
@@ -99,8 +100,10 @@ class TweetInfoFragment : AppCompatDialogFragment() {
     {
         val sb = StringBuilder()
         sb.appendln("User ${marker.userName} says,")
+        sb.appendln()
         sb.appendln(marker.description)
         sb.appendln()
+        sb.appendln("hash tags:")
         val s = marker.hashTags.joinToString()
         sb.appendln(marker.hashTags.joinToString())
 
