@@ -1,49 +1,43 @@
-﻿//you have a value that represents a length of, let's say, 12 meters
-//implement a class to convert it to feet and vice versa
-//the user of your class should be able to pass any length value in meters or feet and get appropriate result in feet or meters
-//m = ft / 3.281
+//you have a value that represents a length of, let's say, 12 meters
+//implement a class/classes to convert it to feet, inches, kilometres and vice versa. 
+//the user of your class/classes should be able to convert length in any units to a value of any units
 //ft = m * 3.281
+//inch = m * 39.3701
+//inch = ft * 12
+//km = m * 1000
 namespace CsharpTest
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            double lengthInMeters = 10.0;//meters
-            var meter = new Meter(){
-                Value = lengthInMeters
-            };
+            var lengthInMeters = new Meter(){Value = 12.0};//meters
+            var lengthInFeet = lengthInMeters.Create<Foot>();
+            var lengthInInches = lengthInFeet.Create<Inch>();
+            var lengthInKm = lengthInInches.Create<Kilometer>();
+            var mFromInches = lengthInInches.Create<Meter>();
+            var inchesFromKm = lengthInKm.Create<Inch>();
 
-            var foot = meter.Create<Foot>();
-            var backMeter = foot.Create<Meter>();
+		    //?
             
-            Console.WriteLine($"Converted length is {foot.Value}");
-            Console.WriteLine($"Converted back length is  {backMeter.Value}");
-
-            lengthInMeters = 10.0;//miles
-            var mile = new Mile(){
-                Value = lengthInMeters
-            };
-
-            foot = mile.Create<Foot>();
-            backMeter = mile.Create<Meter>();
-            
-            Console.WriteLine($"Converted length is {foot.Value}");
-            Console.WriteLine($"Converted back length is  {backMeter.Value}");
+            Console.WriteLine($"Original length in meters is {lengthInMeters.Value}");
+            Console.WriteLine($"length in feet is  {lengthInFeet.Value}");
+            Console.WriteLine($"length in inches is {lengthInInches.Value}");
+            Console.WriteLine($"length in kilometers is  {lengthInKm.Value}");
+            Console.WriteLine($"length in meters from inches is {mFromInches.Value}");
+            Console.WriteLine($"length in inches from km is  {inchesFromKm.Value}");
         }
     }
 
     abstract class Measurement
     {
-        public double Value {get;set;}
+        public double Value {get; set;}
         protected Dictionary<Type, double> multiplierDict = new Dictionary<Type, double>();
         public Measurement Create<T>()  where T : Measurement, new()
         {
-            var target = new T();
-            var type = target.GetType();
-            var multiplier = multiplierDict.ContainsKey(target.GetType())?multiplierDict[type]:1d;
-            target.Value = Value*multiplier;
-            return target;
+            var type = typeof(T);
+            var multiplier = multiplierDict.ContainsKey(type)?multiplierDict[type]:1d;
+            return new T(){Value = Value*multiplier};
         }
     }
 
@@ -52,7 +46,8 @@ namespace CsharpTest
         public Meter()
         {
             multiplierDict.Add(typeof(Foot), 3.281);
-            multiplierDict.Add(typeof(Mile), 1/1609.34);
+            multiplierDict.Add(typeof(Inch), 39.3701);
+            multiplierDict.Add(typeof(Kilometer), 1/1000d);
         }    
     }
 
@@ -61,16 +56,28 @@ namespace CsharpTest
         public Foot()
         {
             multiplierDict.Add(typeof(Meter), 1/3.281);
-            multiplierDict.Add(typeof(Mile), 1/5280d);
+            multiplierDict.Add(typeof(Inch), 12d);
+            multiplierDict.Add(typeof(Kilometer), 1/3281d);
         }    
     }
 
-    class Mile: Measurement
+    class Inch: Measurement
     {    
-        public Mile()
+        public Inch()
         {
-            multiplierDict.Add(typeof(Foot), 5280d);
-            multiplierDict.Add(typeof(Meter), 1609.34);
+            multiplierDict.Add(typeof(Foot), 1/12d);
+            multiplierDict.Add(typeof(Meter), 1/39.3701);
+            multiplierDict.Add(typeof(Kilometer), 1/39370.1);
         }   
+    }
+
+    class Kilometer: Measurement
+    {    
+        public Kilometer()
+        {
+            multiplierDict.Add(typeof(Meter), 1000d);
+            multiplierDict.Add(typeof(Inch), 39370.1);
+            multiplierDict.Add(typeof(Foot), 3281d);
+        }    
     }
 }
